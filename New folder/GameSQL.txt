@@ -1,0 +1,162 @@
+CREATE TABLE  WALLET(
+WALLET_ID BIGSERIAL PRIMARY KEY  NOT NULL ,
+WALLET_AMOUNT decimal,
+user_id REFERENCES GAME_USER(USER_ID),
+Updated_TIME_STAMP timestamp
+ );
+ 
+CREATE TABLE  WALLET_AUDIT(
+WALLET_AUDIT_ID BIGSERIAL PRIMARY KEY  NOT NULL ,
+WALLET_ID integer REFERENCES WALLET(WALLET_ID),
+ACTION varchar (20) NOT NULL ,
+Updated_TIME_STAMP timestamp,
+AUDIT_AMOUNT decimal,
+ORDER_ID	integer
+ )
+ 
+ CREATE TABLE    (
+Role_Id integer PRIMARY KEY NOT NULL,
+Role_Type varchar (50) );
+
+
+CREATE TABLE GAME_USER(
+USER_ID varchar (50) PRIMARY KEY  NOT NULL,
+USER_fName varchar (50)  ,
+role integer REFERENCES GAME_ROLES(ROLE_ID),
+Display_NAME varchar (50) ,
+User_Mobile varchar (50) NOT NULL ,
+user_password varchar (50) NOT NULL,
+
+);
+
+CREATE TABLE GAME_TYPE(
+GAME_TYPE_ID SERIAL PRIMARY KEY  NOT NULL ,
+Game_TYPE varchar (50) not null,
+Amount decimal,
+Updated_TIME_STAMP timestamp
+);
+
+
+
+CREATE TABLE USERS(
+User_Mobile varchar (20) PRIMARY KEY  NOT NULL ,
+User_Password varchar (50) NOT NULL,
+User_Role integer REFERENCES ROLES(Role_Id),
+User_FName varchar (50) NOT NULL ,
+User_SName varchar (50) NOT NULL ,
+User_EmailId varchar (50) NOT NULL ,
+User_Mobile_Alt varchar (50) NOT NULL ,
+User_Address varchar (100) NOT NULL ,
+User_Company varchar (50),
+User_Occupation varchar (50) NOT NULL ,
+User_Created_date  timestamp);
+
+CREATE TABLE Plot_Layout(
+Layout_ID SERIAL PRIMARY KEY,
+Layout_Name varchar (50) NOT NULL,
+Layout_Plan varchar (50),
+Layout_Trace_Data jsonb,
+Layout_Lat varchar (50),
+Layout_Long varchar (50),
+Layout_Glink varchar (50),
+Layout_location varchar (50)
+)
+
+CREATE TABLE Plot_Status(
+Plot_Status_ID integer PRIMARY KEY NOT NULL,
+Plot_Status varchar (20))
+
+CREATE TABLE Plot(
+Plot_ID SERIAL PRIMARY KEY  NOT NULL ,
+Plot_Layout_ID  integer REFERENCES Plot_Layout(Layout_ID), 
+Plot_Value decimal,
+Plot_Area decimal,
+Plot_Facing varchar (20),
+Plot_Dimen varchar (50),
+Plot_Description varchar (250),
+Plot_Status integer REFERENCES Plot_Status(Plot_Status_ID),
+Plot_Created_Date TIMESTAMPTZ,
+Plot_Blocked_Date TIMESTAMPTZ,
+Plot_Booked_Date TIMESTAMPTZ,
+Plot_Cust_Mobile varchar (20) REFERENCES USERS(User_Mobile))
+
+CREATE TABLE Lead_Status(
+Lead_Status_ID integer PRIMARY KEY NOT NULL,
+Lead_Status varchar (20))
+
+CREATE TABLE LEADS(
+Lead_ID BIGSERIAL PRIMARY KEY  NOT NULL ,
+Lead_Cust_Mobile varchar (20) REFERENCES USERS(User_Mobile),
+Lead_Layout_ID integer REFERENCES Plot_Layout(Layout_ID), 
+Lead_Agent_Mobile varchar (20) REFERENCES USERS(User_Mobile),
+Lead_Source varchar (50),
+Lead_Create_Date TIMESTAMPTZ,
+Lead_Close_Date TIMESTAMPTZ,
+Lead_Status integer REFERENCES Lead_Status(Lead_Status_ID))
+
+CREATE TABLE LEADS_ITEM(
+Lead_ITEM_ID BIGSERIAL PRIMARY KEY  NOT NULL ,
+Lead_Item_Lead_ID integer REFERENCES LEADS(Lead_Id),
+Lead_Item_Layout_ID integer REFERENCES Plot_Layout(Layout_ID), 
+Lead_Item_Plot_ID integer REFERENCES Plot(Plot_ID), 
+Lead_Item_DESC varchar (50),, 
+Lead_Item_Negotiation decimal)
+
+CREATE TABLE Audit_Status(
+Audit_Status_ID integer PRIMARY KEY NOT NULL,
+Audit_Status varchar (20))
+
+CREATE TABLE Audit_Type(
+Audit_Type_ID integer PRIMARY KEY NOT NULL,
+Audit_Type varchar (20))
+
+CREATE TABLE Audit_Outcome(
+Audit_Outcome_ID integer PRIMARY KEY NOT NULL,
+Audit_Outcome varchar (20))
+
+CREATE TABLE Document_Type(
+Doc_Type_ID integer PRIMARY KEY NOT NULL,
+Doc_Type varchar (50))
+
+CREATE TABLE Documents(
+Doc_ID BIGSERIAL PRIMARY KEY  NOT NULL,
+Doc_ID_LEAD integer REFERENCES LEADS(Lead_Id),
+Doc_For integer REFERENCES Plot_Layout(Layout_ID), 
+Doc_Type_ID integer REFERENCES Document_Type(Doc_Type_ID), 
+Lead_Doc_Url decimal,
+Doc_Created_DateTime TIMESTAMPTZ)
+
+CREATE TABLE Lead_Audit(
+Lead_Audit_ID BIGSERIAL PRIMARY KEY  NOT NULL,
+Lead_Audit_Lead_Id integer REFERENCES LEADS(Lead_Id),
+Lead_Audit_Status integer REFERENCES Audit_Status(Audit_Status_ID),
+Lead_Audit_Type integer REFERENCES Audit_Type(Audit_Type_ID),
+Lead_Audit_Outcome integer REFERENCES Audit_Outcome(Audit_Outcome_ID),
+Lead_Audit_Schedule_DateTime TIMESTAMPTZ,
+Lead_Audit_Subject varchar (150),
+Lead_Audit_Description varchar (250),
+Lead_Audit_Created_DateTime TIMESTAMPTZ)
+
+
+
+
+SELECT uuid_generate_v1();
+
+
+select * from trainee
+
+
+insert into lead_status  values (1,'Created');
+insert into lead_status values (2,'Prospecting');
+insert into lead_status values (3,'Closure');
+insert into lead_status values (4,'Converted');
+insert into lead_status values (6,'Completed');
+
+select * from lead_status;
+
+insert into plot_status values (1,'Created');
+
+insert into plot_status values (2,'Blocked');
+
+insert into plot_status values (3,'Booked');
+insert into plot_status values (4,'Cancelled');
